@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Giri ~ girii_73</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<style>
+  :root{
+    --bg:#0A0A0B;
+    --bg-soft:#111113;
+    --line:rgba(255,255,255,0.09);
+    --line-strong:rgba(255,255,255,0.16);
+    --text:#EDEDED;
+    --dim:#87878C;
+    --accent:#D7FF3D;
+    --maxw:960px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Manrope',sans-serif;
+    font-weight:400;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
+  }
+  ::selection{background:var(--accent);color:#0A0A0B;}
+
+  /* grain overlay */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+    opacity:0.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* scroll progress */
+  #progress{
+    position:fixed;top:0;left:0;height:2px;width:0%;
+    background:var(--accent);z-index:50;
+    transition:width 0.1s linear;
+  }
+
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:40;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:28px 6vw;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.02em;
+    mix-blend-mode:difference;
+  }
+  nav .mark{color:var(--text);font-weight:500;}
+  nav .mark span{color:var(--accent);}
+  nav ul{list-style:none;display:flex;gap:28px;}
+  nav a{color:var(--dim);text-decoration:none;transition:color .25s ease;}
+  nav a:hover{color:var(--text);}
+  @media (max-width:720px){ nav ul{display:none;} }
+
+  section{
+  max-width:var(--maxw);
+  margin:0 auto;
+  padding:90px 24px 0;
+  position:relative;
+  }
+  #contact{padding-bottom:140px;}
+
+  .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--accent);
+    letter-spacing:0.08em;
+    display:flex;align-items:center;gap:14px;
+    margin-bottom:36px;
+  }
+  .label::after{
+    content:"";flex:1;height:1px;background:var(--line);
+  }
+
+  /* HERO */
+  #hero{
+    min-height:100svh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding-top:120px;
+    max-width:var(--maxw);
+  }
+  #hero .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;color:var(--dim);
+    letter-spacing:0.06em;
+    margin-bottom:22px;
+    opacity:0;
+    animation:rise .8s ease forwards .1s;
+  }
+  #hero h1{
+    font-family:'Bricolage Grotesque',serif;
+    font-weight:600;
+    font-size:clamp(2.6rem,7.5vw,5.6rem);
+    line-height:1.02;
+    letter-spacing:-0.02em;
+    overflow:hidden;
+  }
+  #hero h1 .line{overflow:hidden;}
+  #hero h1 span{
+    display:inline-block;
+    transform:translateY(110%);
+    animation:rise .9s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  #hero .sub{
+    max-width:520px;
+    color:var(--dim);
+    font-size:16px;
+    margin-top:28px;
+    opacity:0;
+    animation:rise .8s ease forwards .7s;
+  }
+  #hero .sub em{color:var(--text);font-style:normal;}
+  #hero .scroll-cue{
+    margin-top:70px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--dim);
+    display:flex;align-items:center;gap:10px;
+    opacity:0;
+    animation:rise .8s ease forwards 1s;
+  }
+  .scroll-cue .dot{
+    width:6px;height:6px;border-radius:50%;background:var(--accent);
+    animation:pulse 1.8s ease-in-out infinite;
+  }
+  .mini-player{
+  display:inline-flex;align-items:center;gap:14px;
+  margin-top:70px;
+  border:1px solid var(--line);border-radius:100px;
+  padding:8px 18px 8px 8px;
+  opacity:0;animation:rise .8s ease forwards 1s;
+}
+.player-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--accent);color:var(--bg);border:none;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;cursor:pointer;flex-shrink:0;
+  transition:transform .2s ease;
+}
+.player-btn:hover{transform:scale(1.08);}
+.player-info{line-height:1.3;}
+.player-title{font-size:13px;color:var(--text);font-weight:500;}
+.player-artist{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--dim);
+}
+.eq-bars{display:flex;align-items:flex-end;gap:3px;height:16px;margin-left:4px;}
+.eq-bars span{
+  width:3px;background:var(--accent);border-radius:2px;
+  height:4px;opacity:.4;
+  animation:eq 1s ease-in-out infinite;
+  animation-play-state:paused;
+}
+.eq-bars span:nth-child(2){animation-delay:.2s;}
+.eq-bars span:nth-child(3){animation-delay:.4s;}
+.eq-bars.playing span{opacity:1;animation-play-state:running;}
+  @keyframes eq{0%,100%{height:4px;}50%{height:16px;}}
+  @keyframes rise{to{transform:translateY(0);opacity:1;}}
+  @keyframes pulse{0%,100%{opacity:.3;}50%{opacity:1;}}
+
+  /* reveal on scroll */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  h2.head{
+    font-family:'Bricolage Grotesque',serif;
+    font-weight:500;
+    font-size:clamp(1.6rem,3vw,2.1rem);
+    letter-spacing:-0.01em;
+    margin-bottom:28px;
+  }
+
+  /* ABOUT */
+  #about p{
+    font-size:16.5px;color:var(--dim);max-width:640px;margin-bottom:16px;
+  }
+  #about p em{color:var(--text);font-style:normal;}
+  #about .tags{
+    display:flex;flex-wrap:wrap;gap:10px;margin-top:32px;
+  }
+  #about .tags span{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;color:var(--dim);
+    border:1px solid var(--line);
+    padding:6px 12px;border-radius:100px;
+  }
+
+  /* WORK */
+  .row{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:6px 24px;
+    padding:26px 0;
+    border-top:1px solid var(--line);
+    text-decoration:none;color:inherit;
+    transition:padding-left .3s ease;
+  }
+  .row:last-child{border-bottom:1px solid var(--line);}
+  .row:hover{padding-left:8px;}
+  .row .title-line{
+    display:flex;align-items:baseline;gap:12px;
+    font-family:'Bricolage Grotesque',serif;
+    font-size:19px;font-weight:500;
+    grid-column:1/2;
+  }
+  .row .title-line .idx{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--dim);
+  }
+  .row:hover .title-line{color:var(--accent);}
+  .row .desc{
+    grid-column:1/2;color:var(--dim);font-size:14px;max-width:520px;
+  }
+  .row .meta{
+    grid-column:2/3;grid-row:1/3;
+    align-self:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--dim);
+    text-align:right;white-space:nowrap;
+  }
+  .row .arrow{
+    display:inline-block;margin-left:4px;
+    transition:transform .3s ease;
+  }
+  .row:hover .arrow{transform:translate(3px,-3px);}
+
+  /* COMMUNITY */
+  .chips{display:flex;flex-wrap:wrap;gap:12px;}
+  .chip{
+    display:flex;align-items:flex-start;gap:14px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px 20px;
+   flex:1 1 220px;
+   text-decoration:none;color:inherit;
+   transition:border-color .3s ease, background .3s ease, transform .3s ease;
+  }
+  .chip:hover{border-color:var(--line-strong);background:var(--bg-soft);transform:translateY(-2px);}
+  .chip .logo{
+    width:36px;height:36px;border-radius:8px;
+    object-fit:cover;flex-shrink:0;
+  }
+  .chip .logo-fallback{
+    width:36px;height:36px;border-radius:8px;flex-shrink:0;
+    background:var(--bg-soft);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);
+  }
+  .chip .chip-text{min-width:0;}
+  .chip .name{font-family:'Bricolage Grotesque',serif;font-size:16px;font-weight:500;margin-bottom:6px;}
+  .chip .desc{font-size:13px;color:var(--dim);}
+
+  /* STACK */
+  .pills{display:flex;flex-wrap:wrap;gap:12px;}
+  .pill{
+  display:flex;align-items:center;gap:10px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:7px 18px 7px 7px;
+  transition:border-color .3s ease, background .3s ease, transform .3s ease;
+  }
+  .pill:hover{border-color:var(--line-strong);background:var(--bg-soft);transform:translateY(-2px);}
+  .pill img{width:22px;height:22px;border-radius:6px;display:block;flex-shrink:0;}
+  .pill .fallback{
+    width:22px;height:22px;border-radius:6px;flex-shrink:0;
+    background:var(--bg-soft);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--accent);
+    letter-spacing:0;
+  }
+  .pill span.name{font-size:14px;color:var(--text);white-space:nowrap;}
+
+  /* CONTACT */
+  #contact .big-link{
+    font-family:'Bricolage Grotesque',serif;
+    font-size:clamp(1.8rem,5vw,3.4rem);
+    font-weight:500;
+    color:var(--text);
+    text-decoration:none;
+    display:inline-block;
+    border-bottom:1px solid var(--line-strong);
+    padding-bottom:6px;
+    transition:color .3s ease, border-color .3s ease;
+  }
+  #contact .big-link:hover{color:var(--accent);border-color:var(--accent);}
+  #contact .links{
+    margin-top:40px;display:flex;gap:30px;
+    font-family:'JetBrains Mono',monospace;font-size:13px;
+  }
+  #contact .links a{color:var(--dim);text-decoration:none;transition:color .25s ease;}
+  #contact .links a:hover{color:var(--accent);}
+
+  footer{
+    max-width:var(--maxw);margin:0 auto;padding:30px 24px 50px;
+    display:flex;justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);
+    border-top:1px solid var(--line);
+  }
+
+  @media (max-width:640px){
+    .row{grid-template-columns:1fr;}
+    .row .meta{grid-column:1/2;grid-row:auto;text-align:left;margin-top:6px;}
+  }
+
+  /* RESUME REQUEST TRIGGER */
+  .resume-btn{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;color:var(--bg);
+    background:var(--accent);
+    border:none;border-radius:100px;
+    padding:12px 22px;
+    cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s ease;
+  }
+  .resume-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(215,255,61,0.18);}
+  .resume-btn:active{transform:translateY(0);}
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed;inset:0;z-index:100;
+    background:rgba(6,6,7,0.72);
+    backdrop-filter:blur(6px);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;
+    opacity:0;pointer-events:none;
+    transition:opacity .3s ease;
+  }
+  .modal-overlay.active{opacity:1;pointer-events:auto;}
+  .modal-box{
+    width:100%;max-width:430px;
+    background:var(--bg-soft);
+    border:1px solid var(--line-strong);
+    border-radius:16px;
+    padding:36px 32px;
+    position:relative;
+    transform:translateY(24px) scale(.98);
+    transition:transform .35s cubic-bezier(.16,1,.3,1);
+  }
+  .modal-overlay.active .modal-box{transform:translateY(0) scale(1);}
+  .modal-close{
+    position:absolute;top:18px;right:18px;
+    width:28px;height:28px;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);border-radius:50%;
+    color:var(--dim);background:transparent;cursor:pointer;
+    font-size:14px;line-height:1;
+    transition:color .2s ease,border-color .2s ease;
+  }
+  .modal-close:hover{color:var(--text);border-color:var(--line-strong);}
+  .modal-step{display:none;}
+  .modal-step.active{display:block;animation:rise .4s cubic-bezier(.16,1,.3,1) forwards;}
+  .modal-eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    color:var(--accent);letter-spacing:0.08em;margin-bottom:10px;
+  }
+  .modal-box h3{
+    font-family:'Bricolage Grotesque',serif;font-weight:500;
+    font-size:22px;letter-spacing:-0.01em;margin-bottom:8px;
+  }
+  .modal-box .modal-sub{color:var(--dim);font-size:13.5px;margin-bottom:26px;}
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--dim);letter-spacing:0.05em;margin-bottom:8px;
+  }
+  .field input{
+    width:100%;background:var(--bg);
+    border:1px solid var(--line);border-radius:8px;
+    padding:12px 14px;color:var(--text);
+    font-family:'Manrope',sans-serif;font-size:14px;
+    outline:none;transition:border-color .2s ease;
+  }
+  .field input:focus{border-color:var(--accent);}
+  .field .err{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    color:#ff6b6b;margin-top:6px;min-height:14px;
+  }
+  .modal-actions{display:flex;gap:10px;margin-top:24px;}
+  .btn{
+    flex:1;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+    border-radius:8px;padding:12px 16px;cursor:pointer;
+    border:1px solid var(--line);background:transparent;color:var(--text);
+    transition:border-color .2s ease,background .2s ease,opacity .2s ease;
+  }
+  .btn:hover{border-color:var(--line-strong);}
+  .btn-primary{background:var(--accent);color:var(--bg);border:none;font-weight:600;}
+  .btn-primary:hover{opacity:.9;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .confirm-email{
+    font-family:'JetBrains Mono',monospace;font-size:15px;
+    color:var(--accent);background:var(--bg);
+    border:1px solid var(--line);border-radius:8px;
+    padding:14px;margin-bottom:8px;word-break:break-all;
+  }
+  .modal-status{
+    font-family:'JetBrains Mono',monospace;font-size:12px;
+    color:var(--dim);text-align:center;margin-top:14px;min-height:16px;
+  }
+  .modal-status.error{color:#ff6b6b;}
+  .success-icon{
+    width:52px;height:52px;border-radius:50%;
+    background:rgba(215,255,61,0.1);border:1px solid var(--accent);
+    color:var(--accent);display:flex;align-items:center;justify-content:center;
+    font-size:22px;margin-bottom:20px;
+  }
+  .spinner{
+    width:16px;height:16px;border-radius:50%;
+    border:2px solid rgba(10,10,11,0.3);border-top-color:var(--bg);
+    display:inline-block;animation:spin .7s linear infinite;
+    vertical-align:middle;margin-right:8px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav>
+  <div class="mark">GIRI<span>.</span></div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#community">Community</a></li>
+    <li><a href="#stack">Stack</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <div class="eyebrow">INDEX / CHENNAI, IN</div>
+  <h1>
+    <span class="line"><span>Giriprasad.</span></span><br/>
+    <span class="line"><span style="animation-delay:.2s">Builder, ~OSS</span></span><br/>
+    <span class="line"><span style="animation-delay:.3s">agentic ai engineer-</span></span><br/>
+    <span class="line"><span style="animation-delay:.4s">Robotics Enthusiast</span></span>
+  </h1>
+  <p class="sub">Einthusiastic Builder and <em> Core team @ CodeSapiens</em>, specializing in <em>AI agents</em> — spanning open-source, a bit of cybersecurity, and robotics. Someone who'd rather ship a rough prototype than talk about one.</p>
+  <div class="mini-player reveal">
+  <button class="player-btn" id="playBtn" onclick="togglePlay()">▶</button>
+  <div class="player-info">
+    <div class="player-title">Track Name</div>
+    <div class="player-artist">Artist — Album</div>
+  </div>
+  <div class="eq-bars" id="eqBars">
+    <span></span><span></span><span></span>
+  </div>
+</div>
+<audio id="bgAudio" src="your-track.mp3" loop></audio>
+</section>
+
+<section id="about">
+  <div class="label reveal">ABOUT</div>
+  <h2 class="head reveal">Building at the intersection of AI agents, hardware, and community.</h2>
+  <p class="reveal">I spend most of my time shipping rather than theorizing — designing <em>autonomous AI agents</em>, building <em>IoT kiosks for rural sustainability</em>, and putting together <em>robotics controllers</em> that actually work in the field.</p>
+  <p class="reveal">Im a core member of <em>CodeSapiens</em>, a builder in the first student tech community, and I'm currently working in <em>College Sapiens</em> — a application developed by students for students with a focus on open-source and community-driven development.</p>
+  <div class="tags reveal">
+    <span>Open Source</span><span>Sustainable Development</span><span>Robotics</span><span>Community Building</span>
+  </div>
+</section>
+
+<section id="work">
+  <div class="label reveal">WORK</div>
+  <h2 class="head reveal">Featured Projects</h2>
+
+  <a class="row reveal" href="https://codesapiens-qr-generator.vercel.app" target="_blank" rel="noopener">
+    <div class="title-line"><span class="idx">01</span> CodeSapiens QR Generator <span class="arrow">↗</span></div>
+    <div class="desc">A QR code generator for the CodeSapiens community, built with Vite + React — with a Next.js version adding logo embedding via qr-code-styling.</div>
+    <div class="meta">Vite · React · Next.js</div>
+  </a>
+
+  <a class="row reveal" href="https://github.com/girii-73" target="_blank" rel="noopener">
+    <div class="title-line"><span class="idx">02</span> AgriVerify <span class="arrow">↗</span></div>
+    <div class="desc">Solar-powered IoT agri-input verification kiosk, designed for the Sairam SDG Ideathon 6.0 — mapped to SDGs 2, 3, 4 and 6.</div>
+    <div class="meta">IoT · Solar · SDG Design</div>
+  </a>
+
+  <a class="row reveal" href="https://github.com/girii-73" target="_blank" rel="noopener">
+    <div class="title-line"><span class="idx">03</span> ROS2 TurtleSim Controller <span class="arrow">↗</span></div>
+    <div class="desc">A joystick controller for TurtleSim using a Logitech Extreme 3D Pro — full button/axis mapping with async service calls.</div>
+    <div class="meta">ROS2 · Python</div>
+  </a>
+
+  <a class="row reveal" href="https://github.com/girii-73" target="_blank" rel="noopener">
+    <div class="title-line"><span class="idx">04</span> ChittuVaakku <span class="arrow">↗</span></div>
+    <div class="desc">A wearable IoT concept for monitoring elderly people in rural communities.</div>
+    <div class="meta">IoT · Concept</div>
+  </a>
+</section>
+
+<section id="community">
+  <div class="label reveal">COMMUNITY</div>
+  <h2 class="head reveal">Where I show up</h2>
+  <div class="chips reveal">
+  <a class="chip" href="https://codesapiens.in/" target="_blank" rel="noopener">
+    <img class="logo" src="assets/logos/cs.jpg" alt="CodeSapiens logo" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'logo-fallback',textContent:'CS'}))"/>
+    <div class="chip-text">
+      <div class="name">CodeSapiens</div>
+      <div class="desc">Core Team — student tech community</div>
+    </div>
+  </a>
+  <a class="chip" href="https://teamadastra.in/" target="_blank" rel="noopener">
+    <img class="logo" src="assets/logos/adastra.png" alt="Ad Astra Rover Team logo" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'logo-fallback',textContent:'AD'}))"/>
+    <div class="chip-text">
+      <div class="name">Ad Astra Rover Team</div>
+      <div class="desc">Software Subsystem Member</div>
+    </div>
+  </a>
+</div>
+</section>
+
+<section id="stack">
+  <div class="label reveal">STACK</div>
+  <h2 class="head reveal">Tools I reach for</h2>
+  <div class="pills reveal">
+    <div class="pill"><img src="https://skillicons.dev/icons?i=py&theme=light" alt="Python"/><span class="name">Python</span></div>
+    <div class="pill"><img src="https://skillicons.dev/icons?i=java&theme=light" alt="Java"/><span class="name">Java</span></div>
+    <div class="pill"><img src="https://skillicons.dev/icons?i=c&theme=light" alt="C"/><span class="name">C</span></div>
+    <div class="pill"><img src="https://skillicons.dev/icons?i=js&theme=light" alt="JavaScript"/><span class="name">JavaScript</span></div>
+    <div class="pill"><img src="https://skillicons.dev/icons?i=react&theme=light" alt="React"/><span class="name">React</span></div>
+    <div class="pill"><img src="https://skillicons.dev/icons?i=vite&theme=light" alt="Vite"/><span class="name">Vite</span></div>
+    <div class="pill"><img src="https://skillicons.dev/icons?i=nextjs&theme=light" alt="Next.js"/><span class="name">Next.js</span></div>
+    <div class="pill"><img src="https://skillicons.dev/icons?i=supabase&theme=light" alt="Supabase"/><span class="name">Supabase</span></div>
+    <div class="pill"><img src="https://skillicons.dev/icons?i=arduino&theme=light" alt="Arduino"/><span class="name">Arduino</span></div>
+    <div class="pill"><img src="https://skillicons.dev/icons?i=ros&theme=light" alt="ROS2"/><span class="name">ROS2</span></div>
+    <div class="pill"><span class="fallback">PS</span><span class="name">PySerial</span></div>
+    <div class="pill"><span class="fallback">IoT</span><span class="name">IoT Sensors</span></div>
+    <div class="pill"><img src="https://skillicons.dev/icons?i=opencv&theme=light" alt="OpenCV"/><span class="name">OpenCV</span></div>
+    <div class="pill"><img src="https://skillicons.dev/icons?i=git&theme=light" alt="Git"/><span class="name">Git</span></div>
+    <div class="pill"><img src="https://skillicons.dev/icons?i=github&theme=light" alt="GitHub"/><span class="name">GitHub</span></div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="label reveal">CONTACT</div>
+  <h2 class="head reveal">Let's build something.</h2>
+  <a class="big-link reveal" href="mailto:giriprasad1104@gmail.com">giriprasad1104@gmail.com</a>
+  <div class="links reveal">
+    <a href="https://github.com/girii-73" target="_blank" rel="noopener">GITHUB ↗</a>
+    <a href="https://www.linkedin.com/in/girii73/" target="_blank" rel="noopener">LINKEDIN ↗</a>
+    <a href="mailto:giriprasad1104@gmail.com">EMAIL ↗</a>
+</div>
+  <button class="resume-btn reveal" style="margin-top:32px;" onclick="openResumeModal()">Request my resume ↓</button>
+</section>
+
+<footer>
+  <span>© 2026 Made with 🩵 by giriprasad ~ XD </span>
+  <span>CHENNAI, INDIA</span>
+</footer>
+
+<!-- RESUME REQUEST MODAL -->
+<div class="modal-overlay" id="resumeModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeResumeModal()">✕</button>
+
+    <!-- STEP 1: DETAILS -->
+    <div class="modal-step active" id="step1">
+      <div class="modal-eyebrow">RESUME REQUEST</div>
+      <h3>Your details</h3>
+      <p class="modal-sub">Fill this in and I'll send my resume straight to your inbox.</p>
+      <div class="field">
+        <label for="rName">Name</label>
+        <input type="text" id="rName" placeholder="Your full name" />
+      </div>
+      <div class="field">
+        <label for="rDesignation">Designation</label>
+        <input type="text" id="rDesignation" placeholder="e.g. Your role or position" />
+      </div>
+      <div class="field">
+        <label for="rEmail">Email</label>
+        <input type="email" id="rEmail" placeholder="you@company.com" />
+        <div class="err" id="rError"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" style="flex:1;" onclick="goToConfirm()">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: CONFIRM EMAIL -->
+    <div class="modal-step" id="step2">
+      <div class="modal-eyebrow">RESUME REQUEST</div>
+      <h3>Confirm your email</h3>
+      <p class="modal-sub">Double-check this is right — your resume will be sent here.</p>
+      <div class="confirm-email" id="confirmEmailDisplay"></div>
+      <div class="modal-actions">
+        <button class="btn" onclick="backToDetails()">Edit</button>
+        <button class="btn btn-primary" id="confirmSendBtn" onclick="confirmAndSend()">Confirm &amp; Send</button>
+      </div>
+      <div class="modal-status" id="sendStatus"></div>
+    </div>
+
+    <!-- STEP 3: SENT -->
+    <div class="modal-step" id="step3">
+      <div class="success-icon">✓</div>
+      <h3>Resume sent!</h3>
+      <p class="modal-sub" id="step3Message">Thanks for reaching out — check your inbox in a moment.</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" style="flex:1;" onclick="closeResumeModal()">Done</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // scroll progress bar
+  const progress = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    progress.style.width = scrolled + '%';
+  });
+
+  // reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -60px 0px'});
+
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = (i % 6) * 0.05 + 's';
+    io.observe(el);
+  });
+
+  function togglePlay(){
+    const audio = document.getElementById('bgAudio');
+    const btn = document.getElementById('playBtn');
+    const eq = document.getElementById('eqBars');
+    if(audio.paused){
+      audio.play();
+      btn.textContent = '❚❚';
+      eq.classList.add('playing');
+    } else {
+      audio.pause();
+      btn.textContent = '▶';
+      eq.classList.remove('playing');
+    }
+  }
+
+  
+</script>
+
+<!-- ===================== RESUME REQUEST WORKFLOW =====================
+  This sends real email via EmailJS (https://www.emailjs.com) — a free
+  service that lets a static site trigger an email through your own
+  mail account, no backend server needed.
+
+  SETUP (one-time, ~10 min):
+  1. Create a free EmailJS account and connect your Gmail (or other
+     mail) account as an "Email Service" → copy the SERVICE_ID.
+  2. Create an "Email Template" with variables: {{to_name}},
+     {{to_email}}, {{designation}} — write your thank-you message using
+     those variables. Copy the TEMPLATE_ID.
+  3. IMPORTANT for the attachment: in the template editor, scroll to
+     "Attachments" and upload your resume PDF there as a FIXED file.
+     Because it's the same file every time, EmailJS will attach it to
+     every email automatically — you don't need to attach it in code.
+  4. Under Account → General, copy your PUBLIC_KEY.
+  5. Replace the three placeholders below with your real IDs.
+  6. In the template's "To Email" field, use {{to_email}} so it sends
+     to the visitor, not to you.
+====================================================================== -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  const EMAILJS_PUBLIC_KEY  = "YOUR_PUBLIC_KEY";
+  const EMAILJS_SERVICE_ID  = "YOUR_SERVICE_ID";
+  const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
+
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+  let resumeRequestData = { name: "", designation: "", email: "" };
+
+  function openResumeModal(){
+    document.getElementById('resumeModal').classList.add('active');
+    showStep('step1');
+    document.getElementById('rName').value = resumeRequestData.name;
+    document.getElementById('rDesignation').value = resumeRequestData.designation;
+    document.getElementById('rEmail').value = resumeRequestData.email;
+    document.getElementById('rError').textContent = "";
+    document.getElementById('sendStatus').textContent = "";
+    document.getElementById('sendStatus').classList.remove('error');
+  }
+
+  function closeResumeModal(){
+    document.getElementById('resumeModal').classList.remove('active');
+  }
+
+  function showStep(id){
+    document.querySelectorAll('.modal-step').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function isValidEmail(email){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function goToConfirm(){
+    const name = document.getElementById('rName').value.trim();
+    const designation = document.getElementById('rDesignation').value.trim();
+    const email = document.getElementById('rEmail').value.trim();
+    const err = document.getElementById('rError');
+
+    if(!name || !designation || !email){
+      err.textContent = "Please fill in every field.";
+      return;
+    }
+    if(!isValidEmail(email)){
+      err.textContent = "That email doesn't look right.";
+      return;
+    }
+    err.textContent = "";
+
+    resumeRequestData = { name, designation, email };
+    document.getElementById('confirmEmailDisplay').textContent = email;
+    showStep('step2');
+  }
+
+  function backToDetails(){
+    showStep('step1');
+  }
+
+  function confirmAndSend(){
+    const btn = document.getElementById('confirmSendBtn');
+    const status = document.getElementById('sendStatus');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Sending…';
+    status.textContent = "";
+    status.classList.remove('error');
+
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_name: resumeRequestData.name,
+      to_email: resumeRequestData.email,
+      designation: resumeRequestData.designation
+    }).then(() => {
+      document.getElementById('step3Message').textContent =
+        `Thanks, ${resumeRequestData.name} — my resume is on its way to ${resumeRequestData.email}.`;
+      showStep('step3');
+      btn.disabled = false;
+      btn.textContent = "Confirm & Send";
+    }).catch((error) => {
+      status.textContent = "Something went wrong — please try again.";
+      status.classList.add('error');
+      btn.disabled = false;
+      btn.textContent = "Confirm & Send";
+      console.error("EmailJS error:", error);
+    });
+  }
+
+  // close on backdrop click or Escape
+  document.getElementById('resumeModal').addEventListener('click', (e) => {
+    if(e.target.id === 'resumeModal') closeResumeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') closeResumeModal();
+  });
+</script>
+
+</body>
+</html>
