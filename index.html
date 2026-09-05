@@ -657,24 +657,26 @@
   1. Create a free EmailJS account and connect your Gmail (or other
      mail) account as an "Email Service" → copy the SERVICE_ID.
   2. Create an "Email Template" with variables: {{to_name}},
-     {{to_email}}, {{designation}} — write your thank-you message using
-     those variables. Copy the TEMPLATE_ID.
-  3. IMPORTANT for the attachment: in the template editor, scroll to
-     "Attachments" and upload your resume PDF there as a FIXED file.
-     Because it's the same file every time, EmailJS will attach it to
-     every email automatically — you don't need to attach it in code.
+     {{to_email}}, {{designation}}, {{resume_link}} — write your
+     thank-you message using those variables, with {{resume_link}}
+     as a clickable "Download my resume" link/button. Copy the
+     TEMPLATE_ID.
+  3. RESUME LINK (Google Drive): share your resume PDF on Drive as
+     "Anyone with the link" → Viewer, grab the FILE_ID from the share
+     URL, and set RESUME_DRIVE_LINK below to:
+     https://drive.google.com/uc?export=view&id=FILE_ID
   4. Under Account → General, copy your PUBLIC_KEY.
-  5. Replace the three placeholders below with your real IDs.
+  5. Replace the placeholders below with your real IDs/link.
   6. In the template's "To Email" field, use {{to_email}} so it sends
      to the visitor, not to you.
 ====================================================================== -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
-  const EMAILJS_PUBLIC_KEY  = "YOUR_PUBLIC_KEY";
-  const EMAILJS_SERVICE_ID  = "YOUR_SERVICE_ID";
-  const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
-
-  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  const EMAILJS_PUBLIC_KEY  = "GFgPGmQPbcvtQ99PV";
+  const EMAILJS_SERVICE_ID  = "service_mhb0xcf";
+  const EMAILJS_TEMPLATE_ID = "template_4vaawsq";
+  const RESUME_DRIVE_LINK   = "https://drive.google.com/uc?export=view&id=1WPzyepTvZlcujYEFC-Nd4_SCLv-ewAKA";
+  emailjs.init({ publicKey: GFgPGmQPbcvtQ99PV });
 
   let resumeRequestData = { name: "", designation: "", email: "" };
 
@@ -735,10 +737,11 @@
     status.textContent = "";
     status.classList.remove('error');
 
-    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    emailjs.send(service_yadupdx, template_4vaawsq, {
       to_name: resumeRequestData.name,
       to_email: resumeRequestData.email,
-      designation: resumeRequestData.designation
+      designation: resumeRequestData.designation,
+      resume_link: RESUME_DRIVE_LINK
     }).then(() => {
       document.getElementById('step3Message').textContent =
         `Thanks, ${resumeRequestData.name} — my resume is on its way to ${resumeRequestData.email}.`;
