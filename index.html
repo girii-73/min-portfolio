@@ -59,6 +59,17 @@
     font-size:12px;
     letter-spacing:0.02em;
     mix-blend-mode:difference;
+    transform:translateY(0);
+    opacity:1;
+    transition:transform .4s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+  }
+  nav.nav-hidden{
+    transform:translateY(-100%);
+    opacity:0;
+    pointer-events:none;
+  }
+  .nav-hover-zone{
+    position:fixed;top:0;left:0;right:0;height:90px;z-index:41;
   }
   nav .mark{color:var(--text);font-weight:500;}
   nav .mark span{color:var(--accent);}
@@ -137,37 +148,13 @@
     width:6px;height:6px;border-radius:50%;background:var(--accent);
     animation:pulse 1.8s ease-in-out infinite;
   }
-  .mini-player{
-  display:inline-flex;align-items:center;gap:14px;
-  margin-top:70px;
-  border:1px solid var(--line);border-radius:100px;
-  padding:8px 18px 8px 8px;
-  opacity:0;animation:rise .8s ease forwards 1s;
-}
-.player-btn{
-  width:34px;height:34px;border-radius:50%;
-  background:var(--accent);color:var(--bg);border:none;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;cursor:pointer;flex-shrink:0;
-  transition:transform .2s ease;
-}
-.player-btn:hover{transform:scale(1.08);}
-.player-info{line-height:1.3;}
-.player-title{font-size:13px;color:var(--text);font-weight:500;}
-.player-artist{
-  font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--dim);
-}
-.eq-bars{display:flex;align-items:flex-end;gap:3px;height:16px;margin-left:4px;}
-.eq-bars span{
-  width:3px;background:var(--accent);border-radius:2px;
-  height:4px;opacity:.4;
-  animation:eq 1s ease-in-out infinite;
-  animation-play-state:paused;
-}
-.eq-bars span:nth-child(2){animation-delay:.2s;}
-.eq-bars span:nth-child(3){animation-delay:.4s;}
-.eq-bars.playing span{opacity:1;animation-play-state:running;}
-  @keyframes eq{0%,100%{height:4px;}50%{height:16px;}}
+  .spotify-embed{
+    max-width:420px;
+    margin-top:70px;
+    opacity:0;
+    animation:rise .8s ease forwards 1s;
+  }
+  .spotify-embed iframe{display:block;width:100%;}
   @keyframes rise{to{transform:translateY(0);opacity:1;}}
   @keyframes pulse{0%,100%{opacity:.3;}50%{opacity:1;}}
 
@@ -430,7 +417,8 @@
 
 <div id="progress"></div>
 
-<nav>
+<div class="nav-hover-zone" id="navHoverZone"></div>
+<nav id="mainNav">
   <div class="mark">GIRI<span>.</span></div>
   <ul>
     <li><a href="#about">About</a></li>
@@ -450,17 +438,9 @@
     <span class="line"><span style="animation-delay:.4s">Robotics Enthusiast</span></span>
   </h1>
   <p class="sub">Einthusiastic Builder and <em> Core team @ CodeSapiens</em>, specializing in <em>AI agents</em> — spanning open-source, a bit of cybersecurity, and robotics. Someone who'd rather ship a rough prototype than talk about one.</p>
-  <div class="mini-player reveal">
-  <button class="player-btn" id="playBtn" onclick="togglePlay()">▶</button>
-  <div class="player-info">
-    <div class="player-title">Track Name</div>
-    <div class="player-artist">Artist — Album</div>
+  <div class="spotify-embed reveal">
+    <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/album/3UueklpFLIfw6EJ0gSQPIW?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
   </div>
-  <div class="eq-bars" id="eqBars">
-    <span></span><span></span><span></span>
-  </div>
-</div>
-<audio id="bgAudio" src="your-track.mp3" loop></audio>
 </section>
 
 <section id="about">
@@ -625,6 +605,32 @@
     progress.style.width = scrolled + '%';
   });
 
+  // nav: hide once scrolled past the top, reveal on hover near the top edge
+  const mainNav = document.getElementById('mainNav');
+  const navHoverZone = document.getElementById('navHoverZone');
+  const NAV_HIDE_THRESHOLD = 80;
+  let navForceShow = false;
+
+  function updateNavVisibility(){
+    if(navForceShow) return;
+    if(window.scrollY > NAV_HIDE_THRESHOLD){
+      mainNav.classList.add('nav-hidden');
+    } else {
+      mainNav.classList.remove('nav-hidden');
+    }
+  }
+
+  window.addEventListener('scroll', updateNavVisibility);
+
+  navHoverZone.addEventListener('mouseenter', () => {
+    navForceShow = true;
+    mainNav.classList.remove('nav-hidden');
+  });
+  navHoverZone.addEventListener('mouseleave', () => {
+    navForceShow = false;
+    updateNavVisibility();
+  });
+
   // reveal on scroll
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => {
@@ -640,22 +646,6 @@
     io.observe(el);
   });
 
-  function togglePlay(){
-    const audio = document.getElementById('bgAudio');
-    const btn = document.getElementById('playBtn');
-    const eq = document.getElementById('eqBars');
-    if(audio.paused){
-      audio.play();
-      btn.textContent = '❚❚';
-      eq.classList.add('playing');
-    } else {
-      audio.pause();
-      btn.textContent = '▶';
-      eq.classList.remove('playing');
-    }
-  }
-
-  
 </script>
 
 <!-- ===================== RESUME REQUEST WORKFLOW =====================
