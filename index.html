@@ -673,10 +673,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
   const EMAILJS_PUBLIC_KEY  = "GFgPGmQPbcvtQ99PV";
-  const EMAILJS_SERVICE_ID  = "service_mhb0xcf";
+  const EMAILJS_SERVICE_ID  = "service_yadupdx";
   const EMAILJS_TEMPLATE_ID = "template_4vaawsq";
   const RESUME_DRIVE_LINK   = "https://drive.google.com/uc?export=view&id=1WPzyepTvZlcujYEFC-Nd4_SCLv-ewAKA";
-  emailjs.init({ publicKey: GFgPGmQPbcvtQ99PV });
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
   let resumeRequestData = { name: "", designation: "", email: "" };
 
@@ -737,7 +737,7 @@
     status.textContent = "";
     status.classList.remove('error');
 
-    emailjs.send(service_yadupdx, template_4vaawsq, {
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
       to_name: resumeRequestData.name,
       to_email: resumeRequestData.email,
       designation: resumeRequestData.designation,
