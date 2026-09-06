@@ -457,25 +457,25 @@
   <div class="label reveal">WORK</div>
   <h2 class="head reveal">Featured Projects</h2>
 
-  <a class="row reveal" href="https://codesapiens-qr-generator.vercel.app" target="_blank" rel="noopener">
+  <a class="row reveal" href="https://codesapiens-qr-generator.vercel.app" target="_blank" rel="noopener noreferrer">
     <div class="title-line"><span class="idx">01</span> CodeSapiens QR Generator <span class="arrow">↗</span></div>
     <div class="desc">A QR code generator for the CodeSapiens community, built with Vite + React — with a Next.js version adding logo embedding via qr-code-styling.</div>
     <div class="meta">Vite · React · Next.js</div>
   </a>
 
-  <a class="row reveal" href="https://github.com/girii-73" target="_blank" rel="noopener">
+  <a class="row reveal" href="https://github.com/girii-73" target="_blank" rel="noopener noreferrer">
     <div class="title-line"><span class="idx">02</span> AgriVerify <span class="arrow">↗</span></div>
     <div class="desc">Solar-powered IoT agri-input verification kiosk, designed for the Sairam SDG Ideathon 6.0 — mapped to SDGs 2, 3, 4 and 6.</div>
     <div class="meta">IoT · Solar · SDG Design</div>
   </a>
 
-  <a class="row reveal" href="https://github.com/girii-73" target="_blank" rel="noopener">
+  <a class="row reveal" href="https://github.com/girii-73" target="_blank" rel="noopener noreferrer">
     <div class="title-line"><span class="idx">03</span> ROS2 TurtleSim Controller <span class="arrow">↗</span></div>
     <div class="desc">A joystick controller for TurtleSim using a Logitech Extreme 3D Pro — full button/axis mapping with async service calls.</div>
     <div class="meta">ROS2 · Python</div>
   </a>
 
-  <a class="row reveal" href="https://github.com/girii-73" target="_blank" rel="noopener">
+  <a class="row reveal" href="https://github.com/girii-73" target="_blank" rel="noopener noreferrer">
     <div class="title-line"><span class="idx">04</span> ChittuVaakku <span class="arrow">↗</span></div>
     <div class="desc">A wearable IoT concept for monitoring elderly people in rural communities.</div>
     <div class="meta">IoT · Concept</div>
@@ -486,14 +486,14 @@
   <div class="label reveal">COMMUNITY</div>
   <h2 class="head reveal">Where I show up</h2>
   <div class="chips reveal">
-  <a class="chip" href="https://codesapiens.in/" target="_blank" rel="noopener">
+  <a class="chip" href="https://codesapiens.in/" target="_blank" rel="noopener noreferrer">
     <img class="logo" src="assets/logos/cs.jpg" alt="CodeSapiens logo" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'logo-fallback',textContent:'CS'}))"/>
     <div class="chip-text">
       <div class="name">CodeSapiens</div>
       <div class="desc">Core Organizing Team of Codesapiens — student tech community</div>
     </div>
   </a>
-  <a class="chip" href="https://teamadastra.in/" target="_blank" rel="noopener">
+  <a class="chip" href="https://teamadastra.in/" target="_blank" rel="noopener noreferrer">
     <img class="logo" src="assets/logos/adastra.png" alt="Ad Astra Rover Team logo" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'logo-fallback',textContent:'AD'}))"/>
     <div class="chip-text">
       <div class="name">Ad Astra Rover Team</div>
@@ -530,9 +530,9 @@
   <h2 class="head reveal">Let's build something.</h2>
   <a class="big-link reveal" href="mailto:giriprasad1104@gmail.com">giriprasad1104@gmail.com</a>
   <div class="links reveal">
-    <a href="https://github.com/girii-73" target="_blank" rel="noopener">GITHUB ↗</a>
-    <a href="https://www.linkedin.com/in/girii73/" target="_blank" rel="noopener">LINKEDIN ↗</a>
-    <a href="mailto:giriprasad1104@gmail.com">EMAIL ↗</a>
+    <a href="https://github.com/girii-73" target="_blank" rel="noopener noreferrer">GITHUB ↗</a>
+    <a href="https://www.linkedin.com/in/girii73/" target="_blank" rel="noopener noreferrer">LINKEDIN ↗</a>
+    <a href="mailto:giriprasad1104@gmail.com" target="_blank" rel="noopener noreferrer">EMAIL ↗</a>
 </div>
   <button class="resume-btn reveal" style="margin-top:32px;" onclick="openResumeModal()">Request my resume ↓</button>
 </section>
@@ -565,6 +565,7 @@
         <input type="email" id="rEmail" placeholder="you@company.com" />
         <div class="err" id="rError"></div>
       </div>
+      <input type="text" id="rHoneypot" name="website" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
       <div class="modal-actions">
         <button class="btn btn-primary" style="flex:1;" onclick="goToConfirm()">Continue</button>
       </div>
@@ -705,6 +706,8 @@
   }
 
   function goToConfirm(){
+    if(document.getElementById('rHoneypot').value !== "") return;
+
     const name = document.getElementById('rName').value.trim();
     const designation = document.getElementById('rDesignation').value.trim();
     const email = document.getElementById('rEmail').value.trim();
@@ -729,6 +732,10 @@
     showStep('step1');
   }
 
+  function sanitize(str){
+  return str.replace(/[<>{}]/g, "").trim();
+}
+
   function confirmAndSend(){
     const btn = document.getElementById('confirmSendBtn');
     const status = document.getElementById('sendStatus');
@@ -738,10 +745,10 @@
     status.classList.remove('error');
 
     emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-      to_name: resumeRequestData.name,
-      to_email: resumeRequestData.email,
-      designation: resumeRequestData.designation,
-      resume_link: RESUME_DRIVE_LINK
+    to_name: sanitize(resumeRequestData.name),
+    to_email: resumeRequestData.email,
+    designation: sanitize(resumeRequestData.designation),
+    resume_link: "https://drive.google.com/file/d/FILE_ID_HERE/view?usp=sharing"
     }).then(() => {
       document.getElementById('step3Message').textContent =
         `Thanks, ${resumeRequestData.name} — my resume is on its way to ${resumeRequestData.email}.`;
